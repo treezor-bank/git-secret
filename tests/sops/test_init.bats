@@ -17,8 +17,7 @@ function teardown {
   run git secret init -m sops
   [ "$status" -eq 0 ]
 
-  run git config --get git-secret.mode
-  [ "$output" = "sops" ]
+  run grep "mode = sops" "$_SECRETS_DIR_CONFIG"
   [ "$status" -eq 0 ]
 
   [[ -d "${_SECRETS_DIR}" ]]

@@ -6,6 +6,10 @@ function __replace_in_file_linux {
   sed -i.bak "s/^\($1\s*=\s*\).*\$/\1$2/" "$3"
 }
 
+function __get_from_file_linux {
+  sed "s/^$1\s*=\s*\(.*\)\$/\1/" "$2"
+}
+
 
 function __temp_file_linux {
   : "${TMPDIR:=/tmp}"

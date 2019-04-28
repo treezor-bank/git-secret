@@ -60,10 +60,6 @@ function init {
     _abort "init does not understand params: $*"
   fi
   
-  # We set mode here so that it can be changed
-  # with init command even if already initialized (see failure below)
-  _set_mode "$mode"
-
   # Check if '.gitsecret/' already exists:
   local git_secret_dir
   git_secret_dir=$(_get_secrets_dir)
@@ -80,7 +76,10 @@ function init {
   mkdir "$git_secret_dir" "$(_get_secrets_dir_keys)" "$(_get_secrets_dir_path)" \
 	"$(_get_secrets_dir_sops)"
   touch "$(_get_secrets_dir_keys_mapping)" "$(_get_secrets_dir_paths_mapping)" \
-        "$(_get_secrets_dir_sops_groups)" "$(_get_secrets_dir_sops_config)"
+        "$(_get_secrets_dir_sops_groups)" "$(_get_secrets_dir_sops_config)" \
+	"$(_get_secrets_dir_config)"
+
+  _set_mode "$mode"
 
   _message "init created: '$git_secret_dir/'"
 

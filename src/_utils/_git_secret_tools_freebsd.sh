@@ -8,6 +8,10 @@ function __replace_in_file_freebsd {
   sed -i.bak "s/^\($1[[:space:]]*=[[:space:]]*\).*\$/\1$2/" "$3"
 }
 
+function __get_from_file_freebsd {
+  sed "s/^$1[[:space:]]*=[[:space:]]*\(.*\)\$/\1/" "$2"
+}
+
 
 function __temp_file_freebsd {
   : "${TMPDIR:=/tmp}"

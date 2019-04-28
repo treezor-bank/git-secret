@@ -7,6 +7,7 @@ _SECRETS_DIR=${SECRETS_DIR:-".gitsecret"}
 _SECRETS_DIR_KEYS="${_SECRETS_DIR}/keys"
 _SECRETS_DIR_PATHS="${_SECRETS_DIR}/paths"
 _SECRETS_DIR_SOPS="${_SECRETS_DIR}/sops"
+_SECRETS_DIR_CONFIG="${_SECRETS_DIR}/config.conf"
 
 # Files:
 _SECRETS_DIR_KEYS_MAPPING="${_SECRETS_DIR_KEYS}/mapping.cfg"
@@ -186,6 +187,16 @@ function _set_config {
   fi
 }
 
+function _get_config {
+  local key="$1"
+  local filename="$2"
+
+  if [ ! -f "$filename" ]; then
+    return
+  fi
+
+  _os_based __get_from_file "$key" "$filename"
+}
 
 function _file_has_line {
   # First parameter is the key, second is the filename.
@@ -431,6 +442,10 @@ function _get_secrets_dir_sops_groups {
 
 function _get_secrets_dir_sops_config {
   _append_root_path "${_SECRETS_DIR_SOPS_CONFIG}"
+}
+
+function _get_secrets_dir_config {
+  _append_root_path "${_SECRETS_DIR_CONFIG}"
 }
 
 # Logic:
@@ -753,7 +768,8 @@ function _get_mode {
 
   # find mode in git config
   local mode
-  mode=$(git config --local --get git-secret.mode)
+  # set in config file
+  mode=$(_get_config "mode" "$_SECRETS_DIR_CONFIG")
 
   if [ -z "$mode" ]; then
     mode=$(_get_default_mode)
@@ -778,9 +794,8 @@ function _set_mode {
     _abort "unexpected mode: $mode"
   fi
 
-  # set in local repo
-  git config --replace-all git-secret.mode "$mode" \
-    || _abort "unable to set mode: $mode"
+  # set in config file
+  _set_config "mode" "$mode" "$_SECRETS_DIR_CONFIG"
 
   # save for later
   SECRET_MODE="$mode"
